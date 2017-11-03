@@ -1,0 +1,8 @@
+{
+    "id": 5,
+    "pid": "Fun",
+    "code": 63636,
+    "hostname": "localhost",
+    "port": 34567,
+    "_comment": "id: Contest ID; pid: Problem Name; code: Your Access Code"
+}

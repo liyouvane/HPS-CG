@@ -1,0 +1,66 @@
+extends layout
+
+block content
+	#message
+	main
+		.container-fluid
+			.jumbotron.contest-heading
+				.container
+					h1 Welcome to #{title}!
+					p Compete and see your ranking!
+
+			.container
+				#contest-panel.panel.panel-default
+					.panel-heading(data-toggle='collapse', data-target='#contest-panel-body') Contest List
+					#contest-panel-body
+						.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th Name
+										th Date
+										th Duration
+										th Status
+								tbody
+									each val, index in contests
+										tr
+											td
+												a(href='/contest/' + index) #{val.name}
+											td
+												p #{(new Date(val.date1)).toLocaleDateString() + ' ' + (new Date(val.date1)).toLocaleTimeString()}
+											td 
+												p #{(new Date(val.date3) - new Date(val.date1)) / 1000} seconds
+											td
+												p End
+
+				p Want to hold a contest? 
+					a(href='/create') Click here.
+				#full-im-container
+					img#full-im(src='/images/compatibility.jpg')
+				p
+					b Example Input for Poser:
+					pre 2 3 5
+				p
+					b Example Output for Poser:
+					pre
+						| 2
+						| 1 1 2 1
+						| 1 2 2 2
+						| 1
+						| 1 1
+				p
+					b Example Input for Solver:
+					pre
+						| 2 3 2
+						| 1 1 2 1
+						| 1 2 2 2
+				p
+					b Example Output for Solver:
+					pre
+						| 2
+						| 1 1
+						| 2 2
+
+	footer.footer
+		.container-fluid
+			p.footer-item.footer-item-copyright Copyright (c) 2017 Good Evening.

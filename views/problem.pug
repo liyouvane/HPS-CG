@@ -1,0 +1,108 @@
+extends layout
+
+block content
+	#message
+	main
+		.container-fluid
+
+			.container
+				h3 #{title}'s Problem
+
+				.row
+					.col-md-9
+						.description
+							p This is a two person game involving a Poser and a Solver. Each team will take on both roles, taking turns. On the day of the competition, I will give you three numbers: <code>numpackages</code>, <code>numversions</code>, and <code>numcompatibles</code>. Maximum values will be 20, 40, and 10000.
+
+							p The Poser sets up numpackages packages p1, ..., pnumpackages. Each package pi has numversions versions: pi.v1, pi.v2, ... p.vnumversions. Poser then sets up up to numcompatibiles compatibility relationships. A compatibility relationship is of the form {p1.v5, p2.v7} which means that those version v5 of p1 can be in a configuration with v7 of p2.
+
+							p A configuration p1.vi1, p2.vi2, p3.vi3, ... , pnumpackages.vinumpackages is acceptable if for every pair of packages pj and pk {pj.vij, pk.vik} is a compatibility relationship.
+
+							p Configurations are governed by the following partial order: configuration c1 = p1.vi1, p2.vi2, p3.vi3, ... , pnumpackages.vinumpackages is greater than c2 = p1.vi1', p2.vi2', p3.vi3', ... , pnumpackages.vinumpackages' if for every j vij ≥ vij' and for at least one k vik > vik'. A configuration c is maximal with respect to a set of configurations D, if no configuration c' in D has the property c' > c.
+
+							p Solver's job is to find at least one maximal acceptable configuration and no non-maximal ones.
+
+							p Play proceeds as follows: Poser ceates the compatibility relationships and then lists one or more acceptable configurations all within two minutes. That set is denoted Cposer. Architect verifies that the configurations in Cposer are all acceptable. If not, the Poser loses. Solver finds one or more acceptable configurations, denoted Csolver. Architect verifies that these configurations are all acceptable. If not or if Solver took more than two minutes, the Solver loses. Now, the Architect acts as follows: 
+
+							p if for every configuration c in Csolver and every configuration c' in Cposer, either c and c' are incomparable or c ≥ c', then Solver wins else Poser wins.
+
+						.controls
+							input.poser.solver(type='hidden', name='id', value=id)
+							input.poser.solver(type='hidden', name='pid', value=title)
+							.panel.panel-default
+								.panel-heading I am Poser...
+								.panel-body
+									p
+										b Input Format:
+									p 3 numbers: <code>numpackages</code>, <code>numversions</code>, and <code>numcompatibles</code> respectively.
+									p
+										b Output Format:
+									p The first line contains one (non-negative) integer <code>m</code> (<code>m</code> <= <code>numcompatibles</code>).
+									p For the next <code>m</code> lines, each line contains 4 integers <code>a</code>,<code>b</code>,<code>c</code>,<code>d</code>, which means that p<code>a</code>.v<code>b</code> is compatible with p<code>c</code>.v<code>d</code>.
+									p The <code>m+2</code> line contains one integer <code>k</code>.
+									p For the next <code>k</code> lines, each line contains <code>numpackages</code> integers <code>x[i]</code> representing a configuration which uses version <code>x[i]</code> of package <code>i</code>.
+									p
+										b Input:
+										pre.poser 
+										p Enter your access code to retrieve the input. Upon your retrival, you must submit your problem within 2 minutes.
+										.row
+											.col-md-8
+												.input-group
+													span.input-group-addon Access Code
+													input.poser.form-control(type='number', name='code')
+											.col-md-2
+												span.poser.refresh.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+												button.btn.btn-primary.poser.retrieve(type='button') Retrieve!
+											.col-md-2
+												button.btn.btn-primary.poser.submit(type='button') Submit!
+									p
+										b Output:
+										.row
+											.col-md-12
+												textarea.poser.form-control(rows=16, name='data')
+										p Enter the access code and submit the problem.
+
+							.panel.panel-default
+								.panel-heading I am Solver...
+								.panel-body
+									p
+										b Input Format:
+									p The first line contains 3 numbers: <code>numpackages</code>, <code>numversions</code>, and <code>numcompatibles</code> respectively.
+									p For the next <code>numcompatibles</code> lines, each line contains 4 integers <code>a</code>,<code>b</code>,<code>c</code>,<code>d</code>, which means that p<code>a</code>.v<code>b</code> is compatible with p<code>c</code>.v<code>d</code>.
+									p
+										b Output Format:
+									p The first line contains one integer <code>k</code>.
+									p For the next <code>k</code> lines, each line contains <code>numpackages</code> integers <code>x[i]</code> representing a configuration which uses version <code>x[i]</code> of package <code>i</code>.
+									p
+										b Input:
+										pre.solver 
+										p Enter your access code to retrieve the input. Upon your retrival, you must submit your solution within 2 minutes.
+										.row
+											.col-md-8
+												.input-group
+													span.input-group-addon Access Code
+													input.solver.form-control(type='number', name='code')
+											.col-md-2
+												span.solver.refresh.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+												button.btn.btn-primary.solver.retrieve(type='button') Retrieve!
+											.col-md-2
+												button.btn.btn-primary.solver.submit(type='button') Submit!
+									p
+										b Output:
+										.row
+											.col-md-12
+												textarea.solver.form-control(rows=16, name='data')
+										p Enter the access code and submit the problem.
+
+					.col-md-3
+						ul.list-group
+							li.list-group-item
+								span Total Accepted:
+							li.list-group-item
+								span Total Submission:
+
+	script(type='text/javascript', src='/javascripts/alert.js')
+	script(type='text/javascript', src='/javascripts/problem.js')
+
+	footer.footer
+		.container-fluid
+			p.footer-item.footer-item-copyright Copyright (c) 2017 Good Evening.

@@ -1,0 +1,66 @@
+extends layout
+
+block content
+	#message
+	main
+		.container-fluid
+
+			.container
+				h1= title
+
+				p This is a two person game involving a Poser and a Solver. Each team will take on both roles, taking turns. On the day of the competition, I will give you three numbers: <code>numpackages</code>, <code>numversions</code>, and <code>numcompatibles</code>. Maximum values will be 20, 40, and 10000.
+
+				p The Poser sets up numpackages packages p1, ..., pnumpackages. Each package pi has numversions versions: pi.v1, pi.v2, ... p.vnumversions. Poser then sets up up to numcompatibiles compatibility relationships. A compatibility relationship is of the form {p1.v5, p2.v7} which means that those version v5 of p1 can be in a configuration with v7 of p2.
+
+				p A configuration p1.vi1, p2.vi2, p3.vi3, ... , pnumpackages.vinumpackages is acceptable if for every pair of packages pj and pk {pj.vij, pk.vik} is a compatibility relationship.
+
+				p Configurations are governed by the following partial order: configuration c1 = p1.vi1, p2.vi2, p3.vi3, ... , pnumpackages.vinumpackages is greater than c2 = p1.vi1', p2.vi2', p3.vi3', ... , pnumpackages.vinumpackages' if for every j vij ≥ vij' and for at least one k vik > vik'. A configuration c is maximal with respect to a set of configurations D, if no configuration c' in D has the property c' > c.
+
+				p Solver's job is to find at least one maximal acceptable configuration and no non-maximal ones.
+
+				p Play proceeds as follows: Poser ceates the compatibility relationships and then lists one or more acceptable configurations all within two minutes. That set is denoted Cposer. Architect verifies that the configurations in Cposer are all acceptable. If not, the Poser loses. Solver finds one or more acceptable configurations, denoted Csolver. Architect verifies that these configurations are all acceptable. If not or if Solver took more than two minutes, the Solver loses. Now, the Architect acts as follows: 
+
+				p if for every configuration c in Csolver and every configuration c' in Cposer, either c and c' are incomparable or c ≥ c', then Solver wins else Poser wins.
+
+				.row
+					.col-lg-4
+						.input-group.date#datetimepicker1
+							span.input-group-addon Date
+							input#date1.form-control(type='text', name='date1')
+							span.input-group-addon
+								span.glyphicon.glyphicon-calendar
+					.col-lg-4
+						.input-group.date#datetimepicker2
+							span.input-group-addon Poser Deadline
+							input#date2.form-control(type='text', name='date2')
+							span.input-group-addon
+								span.glyphicon.glyphicon-calendar
+					.col-lg-4
+						.input-group.date#datetimepicker3
+							span.input-group-addon Solver Deadline
+							input#date3.form-control(type='text', name='date3')
+							span.input-group-addon
+								span.glyphicon.glyphicon-calendar
+					.col-lg-3
+						.input-group
+							span.input-group-addon numpackages
+							input#numpackages.xycenter.form-control(type='number', name='numpackages')
+					.col-lg-3
+						.input-group
+							span.input-group-addon numversions
+							input#numversions.xycenter.form-control(type='number', name='numversions')
+					.col-lg-3
+						.input-group
+							span.input-group-addon numcompatibles
+							input#numcompatibles.xycenter.form-control(type='number', name='numcompatibles')
+					.col-lg-3
+						button.btn.btn-primary#one-click(type='button') Create!
+
+	script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js')
+	script(type='text/javascript', src='//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js')
+	script(type='text/javascript', src='/javascripts/alert.js')
+	script(type='text/javascript', src='/javascripts/create.js')
+
+	footer.footer
+		.container-fluid
+			p.footer-item.footer-item-copyright Copyright (c) 2017 Good Evening.
