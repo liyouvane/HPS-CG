@@ -96,6 +96,9 @@ block content
 					.col-md-3
 						ul.list-group
 							li.list-group-item
+								span In 
+									a(href='/contest/' + id) #{contest.name}
+							li.list-group-item
 								-
 									var count = 0;
 									for (var i in contest.players) {
