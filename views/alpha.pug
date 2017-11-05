@@ -22,17 +22,16 @@ block content
 										th Duration
 										th Status
 								tbody
-									if contests != null
-										each val, index in contests
-											tr
-												td
-													a(href='/contest/' + index) #{val.name}
-												td
-													p #{(new Date(val.date1)).toLocaleDateString() + ' ' + (new Date(val.date1)).toLocaleTimeString()}
-												td 
-													p #{(new Date(val.date3) - new Date(val.date1)) / 1000} seconds
-												td
-													p End
+									each val, index in contests
+										tr
+											td
+												a(href='/contest/' + index) #{val.name}
+											td
+												p #{(new Date(val.date1)).toLocaleDateString() + ' ' + (new Date(val.date1)).toLocaleTimeString()}
+											td 
+												p #{(new Date(val.date3) - new Date(val.date1)) / 1000 / 60} minutes #{(new Date(val.date3) - new Date(val.date1)) / 1000 % 60} seconds
+											td
+												p #{((new Date(val.date3)).getTime() < (new Date()).getTime()) ? 'End' : 'Open'}
 
 				p Want to hold a contest? 
 					a(href='/create') Click here.

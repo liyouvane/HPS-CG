@@ -96,9 +96,16 @@ block content
 					.col-md-3
 						ul.list-group
 							li.list-group-item
-								span Total Accepted:
+								-
+									var count = 0;
+									for (var i in contest.players) {
+										if (i != code && contest.players[i].hasOwnProperty('win') && contest.players[i].win.hasOwnProperty(code)) {
+											count += 1;
+										}
+									}
+								span Total Accepted: #{count}
 							li.list-group-item
-								span Total Submission:
+								span Status: #{contest.players[code].hasOwnProperty('input') ? 'Published' : 'Unpublished'}
 
 	script(type='text/javascript', src='/javascripts/alert.js')
 	script(type='text/javascript', src='/javascripts/problem.js')

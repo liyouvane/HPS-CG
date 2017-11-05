@@ -30,6 +30,9 @@ var add_contest = function(numpackages, numversions, numcompatibles, date1, date
 }
 
 var get_contests = function() {
+	if (!storage.hasOwnProperty('contests')) {
+		return [];
+	}
 	return storage.contests;
 }
 
@@ -200,6 +203,7 @@ var update_solution = function(data, code, poser, id) {
 	// now see who wins?
 	var win = true;
 	for (var i = 0; i < sol.length; ++ i) {
+		win = true;
 		for (var j = 0; j < contest.players[poser].sol.length; ++ j) {
 			var comparable = true;
 			var greater = false;
@@ -214,6 +218,9 @@ var update_solution = function(data, code, poser, id) {
 			if (!greater && smaller) {
 				win = false;
 			}
+		}
+		if (win) {
+			break;
 		}
 	}
 	if (win) {
