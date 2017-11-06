@@ -162,21 +162,25 @@ router.post('/submit', function(req, res) {
 		if (!check_post(poser, id, res)) {
 			return;
 		}
-		if (checker.update_problem(data, code, id)) {
-			res.json({success: true, msg: 'Submitted.'});
-		} else {
-			res.json(failure_format);
-		}
+		checker.update_problem(data, code, id, function(success) {
+			if (success) {
+				res.json({success: true, msg: 'Submitted.'});
+			} else {
+				res.json(failure_format);
+			}
+		});
 	} else if (role == 'solver' && poser != code && contest.players[poser].hasOwnProperty('input')) {
 		if (!check_solver(poser, code, id, res)) {
 			return;
 		}
 		contest.players[poser].locked = true;
-		if (checker.update_solution(data, code, poser, id)) {
-			res.json({success: true, msg: 'Submitted.'});
-		} else {
-			res.json(failure_format);
-		}
+		checker.update_solution(data, code, poser, id, function(success) {
+			if (success) {
+				res.json({success: true, msg: 'Submitted.'});
+			} else {
+				res.json(failure_format);
+			}
+		});
 	} else {
 		res.json(failure);
 	}

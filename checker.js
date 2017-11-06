@@ -1,4 +1,5 @@
 var fs = require('fs');
+var child_process = require('child_process');
 
 /* Constants */
 const config_filename = 'config.json';
@@ -103,133 +104,60 @@ var get_access_time = function(poser, code, id) {
 	return new Date(contest.players[code].get[poser]);
 }
 
-var build_edge = function(a, b, c, d) {
-	var x = a + ' ' + b;
-	var y = c + ' ' + d;
-	if (x < y) {
-		return x + ' ' + y;
-	} else {
-		return y + ' ' + x;
+var ensure = function(data) {
+	if (data.length > 0 && data.indexOf('\n', data.length - 1) !== -1) {
+		return data;
 	}
+	return data + '\n';
 }
 
-var update_problem = function(data, code, id) {
-	var lines = data.split(/\r\n|\n/);
-	if (lines.length == 0) {
-		return false;
-	}
-	var m = parseInt(lines[0]);
+var setup_checker = function(shell, args, input, cb) {
+	var p = child_process.spawn(shell, args);
+	let out = '';
+	let err = '';
+	p.stdout.on('data', function(data) { out += data; });
+	p.stderr.on('data', function(data) { err += data; });
+	p.on('close', function (exitCode) { cb(exitCode, out, err); });
+	p.stdin.end(input);
+}
+
+var update_problem = function(data, code, id, cb) {
 	var contest = get_contest(id);
 	var player = contest.players[code];
-	if (isNaN(m) || m < 0 || m > contest.numcompatibles) {
-		return false;
-	}
-	if (lines.length < m + 2) {
-		return false;
-	}
-	var input = m + '\n';
-	var graph = {};
-	for (var i = 1; i <= m; ++ i) {
-		var line = lines[i].split(/\s+/);
-		if (line.length != 4) {
-			return false;
-		}
-		var a = parseInt(line[0]);
-		var b = parseInt(line[1]);
-		var c = parseInt(line[2]);
-		var d = parseInt(line[3]);
-		if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)
-				|| a <= 0 || a > contest.numpackages
-				|| b <= 0 || b > contest.numversions
-				|| c <= 0 || c > contest.numpackages
-				|| d <= 0 || d > contest.numversions) {
-			return false;
-		}
-		var edge = build_edge(a, b, c, d);
-		graph[edge] = true;
-		input += edge + '\n';
-	}
-	var k = parseInt(lines[m + 1]);
-	if (k <= 0 || lines.length < m + k + 2) {
-		return false;
-	}
-	var sol = [];
-	for (var i = m + 2; i < m + k + 2; ++ i) {
-		var line = lines[i].split(/\s+/).map((i) => (+i));
-		if (line.length != contest.numpackages) {
-			return false;
-		}
-		for (var a = 1; a <= contest.numpackages; ++ a) {
-			for (var c = a + 1; c <= contest.numpackages; ++ c) {
-				if (!graph.hasOwnProperty(build_edge(a, line[a - 1], c, line[c - 1]))) {
-					return false;
+	setup_checker(
+			'build/checker',
+			[],
+			contest.numpackages + ' ' + contest.numversions + ' ' + contest.numcompatibles + '\n' + data,
+			function(exitCode, out, err) {
+				if (exitCode != 0) {
+					cb(false);
+				} else {
+					player.input = out;
+					player.raw = ensure(data);
+					cb(true);
 				}
-			}
-		}
-		sol.push(line);
-	}
-	player.input = input;
-	player.graph = graph;
-	player.sol = sol;
-	return true;
+			});
 }
 
-var update_solution = function(data, code, poser, id) {
-	var lines = data.split(/\r\n|\n/);
-	if (lines.length == 0) {
-		return false;
-	}
-	var k = parseInt(lines[0]);
-	if (k <= 0 || lines.length < k + 1) {
-		return false;
-	}
+var update_solution = function(data, code, poser, id, cb) {
 	var contest = get_contest(id);
-	var graph = contest.players[poser].graph;
-	var sol = [];
-	for (var i = 1; i <= k; ++ i) {
-		var line = lines[i].split(/\s+/).map((i) => (+i));
-		if (line.length != contest.numpackages) {
-			return false;
-		}
-		for (var a = 1; a <= contest.numpackages; ++ a) {
-			for (var c = a + 1; c <= contest.numpackages; ++ c) {
-				if (!graph.hasOwnProperty(build_edge(a, line[a - 1], c, line[c - 1]))) {
-					return false;
-				}
-			}
-		}
-		sol.push(line);
-	}
-	// now see who wins?
-	var win = true;
-	for (var i = 0; i < sol.length; ++ i) {
-		win = true;
-		for (var j = 0; j < contest.players[poser].sol.length; ++ j) {
-			var comparable = true;
-			var greater = false;
-			var smaller = false;
-			for (var p = 0; p < contest.numpackages; ++ p) {
-				if (sol[i][p] >= contest.players[poser].sol[j][p]) {
-					greater = true;
+	setup_checker(
+			'build/checker',
+			['1'],
+			contest.numpackages + ' ' + contest.numversions + ' ' + contest.numcompatibles + '\n' + contest.players[poser].raw + data,
+			function(exitCode, out, err) {
+				if (exitCode != 0) {
+					cb(false);
 				} else {
-					smaller = true;
+					if (err.length > 0) { // win!
+						if (!contest.players[code].hasOwnProperty('win')) {
+							contest.players[code].win = {};
+						}
+						contest.players[code].win[poser] = true;
+					}
+					cb(true);
 				}
-			}
-			if (!greater && smaller) {
-				win = false;
-			}
-		}
-		if (win) {
-			break;
-		}
-	}
-	if (win) {
-		if (!contest.players[code].hasOwnProperty('win')) {
-			contest.players[code].win = {};
-		}
-		contest.players[code].win[poser] = true;
-	}
-	return true;
+			});
 }
 
 /* Regularly, save the current storage into a file. */

@@ -7,6 +7,8 @@ chmod +x setup.sh
 ./setup.sh && bin/www
 ```
 
+Then you are able to open `localhost:34567` in your browser to visit the website.
+
 Run the client:
 ```
 chmod +x setup.sh
@@ -60,3 +62,7 @@ Query Parameters:
 Request Data:
 	data
 ```
+
+## Checker
+
+We implement a separate checker for this problem. The new version of server call this checker when checking.
