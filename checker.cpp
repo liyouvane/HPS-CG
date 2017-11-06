@@ -45,17 +45,17 @@ bool check_clique(vector<int> v) {
 
 bool compare(vector<int> v) {
 	for (auto s: p) {
-		bool greater = false;
-		bool smaller = false;
+		bool all_greater = true;
+		bool all_smaller = true;
 		for (int j = 0; j < n; ++ j) {
-			if (v[j] >= s[j]) {
-				greater = true;
-			} else {
-				smaller = true;
+			if (v[j] < s[j]) {
+				all_greater = false;
+			} else if (v[j] > s[j]) {
+				all_smaller = false;
 			}
-			if (!greater && smaller) {
-				return false;
-			}
+		}
+		if (!all_greater && all_smaller) {
+			return false;
 		}
 	}
 	return true;
