@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 			cerr << win << endl;
 		}
 	}
-	if (!cin.eof()) {
+	if (cin.peek() != EOF || !cin.eof()) {
 		exit(1);
 	}
 	return 0;
