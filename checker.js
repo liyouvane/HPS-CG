@@ -153,7 +153,7 @@ var update_solution = function(data, code, poser, id, cb) {
 						if (!contest.players[code].hasOwnProperty('win')) {
 							contest.players[code].win = {};
 						}
-						contest.players[code].win[poser] = true;
+						contest.players[code].win[poser] = data;
 					}
 					cb(true);
 				}

@@ -2,6 +2,37 @@ extends layout
 
 block content
 	#message
+
+	.modal.fade#ranking(tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+		.modal-dialog.modal-lg(role='document')
+			.modal-content
+				.modal-header
+					button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') &times;
+					h4.modal-title#myModalLabel Ranking
+				.modal-body
+					.table-responsive
+						table.table.table-hover.table-striped
+							thead
+								tr
+									th Name
+									th Score
+									each val in ranking
+										th= contest.players[val[1]].name
+											if contest.players[val[1]].hasOwnProperty('input')
+												span.glyphicon.glyphicon-ok
+							tbody
+								each val in ranking
+									tr
+										td= contest.players[val[1]].name
+										td= val[0]
+										each p in ranking
+											th
+												if (contest.players[val[1]].hasOwnProperty('win') && contest.players[val[1]].win.hasOwnProperty(p[1]))
+													span.glyphicon.glyphicon-ok
+				.modal-footer
+					button.btn.btn-default(data-dismiss='modal') Close
+
 	main
 		.container-fluid
 
@@ -45,7 +76,7 @@ block content
 													td= index + 1
 													td= contest.players[val[1]].name
 													td= val[0]
-								a(href='#') More...
+								a(href='#', data-toggle='modal' data-target='#ranking') More...
 
 	script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js')
 	script(type='text/javascript', src='//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js')
